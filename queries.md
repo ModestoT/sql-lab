@@ -16,11 +16,19 @@ SELECT * FROM Customers where CustomerName like '%market%';
 INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country) 
 VALUES ('The Shire', 'Bilbo Baggins', '1 Hobbit-Hole', 'Bag End', 111, 'Middle Earth');
 ## update _Bilbo Baggins_ record so that the postal code changes to _"11122"_.
-UPDATE Customers SET PostalCode = 11122 WHERE ContactName = 'Bilbo Baggins'
+UPDATE Customers SET PostalCode = 11122 WHERE ContactName = 'Bilbo Baggins';
 ## list orders grouped by customer showing the number of orders per customer. _Rattlesnake Canyon Grocery_ should have 7 orders.
-
+SELECT Customers.CustomerName, COUNT(Orders.OrderID) AS NumberOfOrders from Orders
+LEFT JOIN Customers ON Orders.CustomerID = Customers.CustomerID GROUP BY CustomerName;
 ## list customers names and the number of orders per customer. Sort the list by number of orders in descending order. _Ernst Handel_ should be at the top with 10 orders followed by _QUICK-Stop_, _Rattlesnake Canyon Grocery_ and _Wartian Herkku_ with 7 orders each.
-
+SELECT Customers.CustomerName, COUNT(Orders.OrderID) AS NumberOfOrders from Orders
+LEFT JOIN Customers ON Orders.CustomerID = Customers.CustomerID GROUP BY CustomerName
+ORDER BY NumberOfOrders DESC;
 ## list orders grouped by customer's city showing number of orders per city. Returns 58 Records with _Aachen_ showing 2 orders and _Albuquerque_ showing 7 orders.
-
+SELECT Customers.City, COUNT(Orders.OrderID) AS NumberOfOrders from Orders
+LEFT JOIN Customers ON Orders.CustomerID = Customers.CustomerID GROUP BY City
 ## delete all users that have no orders. Should delete 17 (or 18 if you haven't deleted the record added) records.
+DELETE FROM Customers 
+WHERE CustomerID NOT IN(SELECT CustomerID
+					FROM Orders
+                    WHERE CustomerID is NOT NULL )
